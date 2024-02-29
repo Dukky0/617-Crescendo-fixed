@@ -14,13 +14,8 @@ public class Intake extends SubsystemBase {
         Motor = new TalonSRX(Constants.MotorConstants.INTAKE);
     }
 
-    public void setIntake(boolean input) {
-        if (input) {
-            Motor.set(ControlMode.PercentOutput, 1);
-        } else {
-            Motor.set(ControlMode.PercentOutput, 1);
-        }
-        
+    public void setIntake(double input) {
+            Motor.set(ControlMode.PercentOutput, input);
     }
 
     public void initDefaultCommand() {

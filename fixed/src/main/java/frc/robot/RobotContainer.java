@@ -38,34 +38,36 @@ public class RobotContainer {
   public RobotContainer() {
     driver = new Joystick(Constants.OperatorConstants.kDriverControllerPort);
 
-    m_mechanumDrive.setDefaultCommand(
-      new MotorTest(m_mechanumDrive)
-    );
-
-    m_intake.setDefaultCommand(
-      new Suck(m_intake)
-    );
-
-    m_shooter.setDefaultCommand(
-      new Shoot(m_shooter)
-    );
-
     SmartDashboard.putNumber("Axis 0", driver.getRawAxis(0));
     SmartDashboard.putNumber("Axis 1", driver.getRawAxis(1));
-
 
     // Configure the trigger bindings
     configureBindings();
   }
 
   private void configureBindings() {
+
+    // m_mechanumDrive.setDefaultCommand(
+    //   new MotorTest(m_mechanumDrive)
+    // );
+
+    // m_intake.setDefaultCommand(
+    //   new Suck(m_intake, 1.0)
+    // );
+
+    // m_shooter.setDefaultCommand(
+    //   new Shoot(m_shooter, 1.0)
+    // );
+
     driver = new Joystick(Constants.OperatorConstants.kDriverControllerPort);
 
     intakeButton = new JoystickButton(driver, Constants.OperatorConstants.THUMB_BUTTON);
     trigger = new JoystickButton(driver, Constants.OperatorConstants.TRIGGER);
 
-    // intakeButton.whileTrue(new Suck(m_intake));
-    // trigger.whileTrue(new Shoot(m_shooter));
+    intakeButton.onTrue(new Suck(m_intake, 1.0));
+    intakeButton.onFalse(new Suck(m_intake, 0.0));
+    trigger.onTrue(new Shoot(m_shooter, 1.0));
+    trigger.onFalse(new Shoot(m_shooter, 0.0));
   }
 
   /**

@@ -5,7 +5,7 @@ public class Constants {
         public static final int kDriverControllerPort = 0;
     
         public static final int THUMB_BUTTON = 2;
-        public static final int TRIGGER = 0;
+        public static final int TRIGGER = 1;
     
       }
     
