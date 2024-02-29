@@ -10,6 +10,11 @@ public class FieldCentric extends Command {
 
     public static Joystick driver;
 
+    private static double FrontLeft;
+    private static double FrontRight;
+    private static double BackLeft;
+    private static double BackRight;
+
     public FieldCentric(MechanumDrive mechanumDrive) {
         m_mechanumDrive = mechanumDrive;
         // Use addRequirements() here to declare subsystem dependencies.
@@ -34,8 +39,33 @@ public class FieldCentric extends Command {
         // use field centric controls by subtracting off the robot angle
         angle -= MechanumDrive.Gyro.getAngle();
 
-        m_mechanumDrive.setDrive(angle, magnitude, twist);
+        mechanumCalc(angle, magnitude, twist);
+
+        m_mechanumDrive.setDrive(FrontLeft, FrontRight, BackLeft, BackRight);
     }
+
+    public void mechanumCalc(double translationAngle, double translationPower, double turnPower) {
+        // calculate motor power
+        double ADPower = translationPower * Math.sqrt(2) * 0.5 * (Math.sin(translationAngle) + Math.cos(translationAngle));
+        double BCPower = translationPower * Math.sqrt(2) * 0.5 * (Math.sin(translationAngle) - Math.cos(translationAngle));
+
+        // check if turning power will interfere with normal translation
+        // check ADPower to see if trying to apply turnPower would put motor power over 1.0 or under -1.0
+        double turningScale = Math.max(Math.abs(ADPower + turnPower), Math.abs(ADPower - turnPower));
+        // check BCPower to see if trying to apply turnPower would put motor power over 1.0 or under -1.0
+        turningScale = Math.max(turningScale, Math.max(Math.abs(BCPower + turnPower), Math.abs(BCPower - turnPower)));
+
+        // adjust turn power scale correctly
+        if (Math.abs(turningScale) < 1.0) {
+            turningScale = 1.0;
+        }
+
+        FrontLeft = (ADPower - turningScale) / turningScale;
+        FrontRight = (BCPower + turningScale) / turningScale;
+        BackLeft = (BCPower - turningScale) / turningScale;
+        BackRight = (ADPower + turningScale) / turningScale;
+    }
+
 
      // Make this return true when this Command no longer needs to run execute()
      public boolean isFinished() {
@@ -44,7 +74,7 @@ public class FieldCentric extends Command {
 
     // Called once after isFinished returns true
     public void end() {
-        m_mechanumDrive.setDrive(0.0, 0.0, 0.0);
+        m_mechanumDrive.setDrive(0.0, 0.0, 0.0, 0.0);
     }
 
     // Called when another command which requires one or more of the same

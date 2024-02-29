@@ -5,12 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.drivetrain.MechanumDrive;
 import frc.robot.drivetrain.commands.FieldCentric;
+import frc.robot.drivetrain.commands.MotorTest;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.Suck;
 import frc.robot.shooter.Shooter;
@@ -34,13 +36,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-  }
+    driver = new Joystick(Constants.OperatorConstants.kDriverControllerPort);
 
-  private void configureBindings() {
     m_mechanumDrive.setDefaultCommand(
-      new FieldCentric(m_mechanumDrive)
+      new MotorTest(m_mechanumDrive)
     );
 
     m_intake.setDefaultCommand(
@@ -51,6 +50,15 @@ public class RobotContainer {
       new Shoot(m_shooter)
     );
 
+    SmartDashboard.putNumber("Axis 0", driver.getRawAxis(0));
+    SmartDashboard.putNumber("Axis 1", driver.getRawAxis(1));
+
+
+    // Configure the trigger bindings
+    configureBindings();
+  }
+
+  private void configureBindings() {
     driver = new Joystick(Constants.OperatorConstants.kDriverControllerPort);
 
     intakeButton = new JoystickButton(driver, Constants.OperatorConstants.THUMB_BUTTON);
