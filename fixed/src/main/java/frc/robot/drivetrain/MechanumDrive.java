@@ -13,15 +13,11 @@ public class MechanumDrive extends SubsystemBase {
     private static TalonSRX BackLeft;
     private static TalonSRX BackRight;
 
-    public static AnalogGyro Gyro;
-
     public MechanumDrive() {
         FrontLeft = new TalonSRX(Constants.MotorConstants.FRONT_LEFT);
         FrontRight = new TalonSRX(Constants.MotorConstants.FRONT_RIGHT);
         BackLeft = new TalonSRX(Constants.MotorConstants.BACK_LEFT);
         BackRight = new TalonSRX(Constants.MotorConstants.BACK_RIGHT);
-
-        Gyro = new AnalogGyro(Constants.DataConstants.GYRO);
     }
 
     public void setDrive(double f_left, double f_right, double b_left, double b_right) {

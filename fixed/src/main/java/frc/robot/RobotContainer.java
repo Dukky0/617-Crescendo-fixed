@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AnalogAccelerometer;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -12,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.drivetrain.MechanumDrive;
 import frc.robot.drivetrain.commands.FieldCentric;
+import frc.robot.drivetrain.commands.Kinematics;
 import frc.robot.drivetrain.commands.MotorTest;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.Suck;
@@ -33,10 +37,12 @@ public class RobotContainer {
   public static Joystick driver;
   public static JoystickButton intakeButton;
   public static Trigger trigger;
+  public static AnalogGyro gyro;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     driver = new Joystick(Constants.OperatorConstants.kDriverControllerPort);
+    gyro = new AnalogGyro(Constants.DataConstants.GYRO);
 
     SmartDashboard.putNumber("Axis 0", driver.getRawAxis(0));
     SmartDashboard.putNumber("Axis 1", driver.getRawAxis(1));
@@ -47,9 +53,9 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    // m_mechanumDrive.setDefaultCommand(
-    //   new MotorTest(m_mechanumDrive)
-    // );
+    m_mechanumDrive.setDefaultCommand(
+      new Kinematics(m_mechanumDrive, gyro.getAngle())
+    );
 
     // m_intake.setDefaultCommand(
     //   new Suck(m_intake, 1.0)
@@ -64,7 +70,7 @@ public class RobotContainer {
     intakeButton = new JoystickButton(driver, Constants.OperatorConstants.THUMB_BUTTON);
     trigger = new JoystickButton(driver, Constants.OperatorConstants.TRIGGER);
 
-    intakeButton.onTrue(new Suck(m_intake, 1.0));
+    intakeButton.onTrue(new Suck(m_intake, 0.7));
     intakeButton.onFalse(new Suck(m_intake, 0.0));
     trigger.onTrue(new Shoot(m_shooter, 1.0));
     trigger.onFalse(new Shoot(m_shooter, 0.0));

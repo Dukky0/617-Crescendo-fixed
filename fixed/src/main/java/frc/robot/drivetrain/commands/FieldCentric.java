@@ -1,5 +1,6 @@
 package frc.robot.drivetrain.commands;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -15,8 +16,11 @@ public class FieldCentric extends Command {
     private static double BackLeft;
     private static double BackRight;
 
-    public FieldCentric(MechanumDrive mechanumDrive) {
+    public final AnalogGyro i_angle;
+
+    public FieldCentric(MechanumDrive mechanumDrive, AnalogGyro angle) {
         m_mechanumDrive = mechanumDrive;
+        i_angle = angle;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(mechanumDrive);
     }
@@ -37,7 +41,7 @@ public class FieldCentric extends Command {
         double twist = driver.getTwist();
         
         // use field centric controls by subtracting off the robot angle
-        angle -= MechanumDrive.Gyro.getAngle();
+        angle -= i_angle.getAngle();
 
         mechanumCalc(angle, magnitude, twist);
 
@@ -46,8 +50,8 @@ public class FieldCentric extends Command {
 
     public void mechanumCalc(double translationAngle, double translationPower, double turnPower) {
         // calculate motor power
-        double ADPower = translationPower * Math.sqrt(2) * 0.5 * (Math.sin(translationAngle) + Math.cos(translationAngle));
-        double BCPower = translationPower * Math.sqrt(2) * 0.5 * (Math.sin(translationAngle) - Math.cos(translationAngle));
+        double ADPower = translationPower * (Math.sqrt(2) * 0.5) * (Math.sin(translationAngle) + Math.cos(translationAngle));
+        double BCPower = translationPower * (Math.sqrt(2) * 0.5) * (Math.sin(translationAngle) - Math.cos(translationAngle));
 
         // check if turning power will interfere with normal translation
         // check ADPower to see if trying to apply turnPower would put motor power over 1.0 or under -1.0
@@ -60,10 +64,15 @@ public class FieldCentric extends Command {
             turningScale = 1.0;
         }
 
-        FrontLeft = (ADPower - turningScale) / turningScale;
-        FrontRight = (BCPower + turningScale) / turningScale;
-        BackLeft = (BCPower - turningScale) / turningScale;
+        FrontLeft = ((-1 * ADPower) - turningScale) / turningScale;
+        BackLeft = ((-1 * BCPower) + turningScale) / turningScale;
+        FrontRight = (BCPower - turningScale) / turningScale;
         BackRight = (ADPower + turningScale) / turningScale;
+
+        // FrontLeft = -1 * ADPower;
+        // BackLeft = -1 * BCPower;
+        // FrontRight = BCPower;
+        // BackRight = ADPower;
     }
 
 
