@@ -15,7 +15,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void setIntake(double input) {
-            Motor.set(ControlMode.PercentOutput, input);
+            Motor.set(ControlMode.PercentOutput, -1* input);
     }
 
     public void initDefaultCommand() {

@@ -42,17 +42,19 @@ public class Kinematics extends Command {
         );
 
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            0.01 * driver.getRawAxis(0), 0.01 * driver.getRawAxis(1), 0, Rotation2d.fromDegrees(0)
+            1 * driver.getRawAxis(0), 1 * driver.getRawAxis(1), 2 * driver.getTwist() , Rotation2d.fromDegrees(m_angle)
         );
 
         MecanumDriveWheelSpeeds wheelSpeeds = m_kinematics.toWheelSpeeds(speeds);
         // MecanumDriveWheelSpeeds wheelSpeeds = new MecanumDriveWheelSpeeds(0.1, 0.1, 0.1, 0.1);
 
+        System.out.println(speeds);
+        System.out.println(m_angle);
 
         double frontLeft = wheelSpeeds.frontLeftMetersPerSecond;
         double frontRight = wheelSpeeds.frontRightMetersPerSecond;
-        double backLeft = wheelSpeeds.rearLeftMetersPerSecond;
-        double backRight = wheelSpeeds.rearRightMetersPerSecond;
+        double backLeft = -1 * wheelSpeeds.rearLeftMetersPerSecond;
+        double backRight = -1 * wheelSpeeds.rearRightMetersPerSecond;
 
         m_mechanumDrive.setDrive(frontLeft, frontRight, backLeft, backRight);
     }

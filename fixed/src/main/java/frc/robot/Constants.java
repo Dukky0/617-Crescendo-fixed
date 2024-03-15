@@ -6,7 +6,8 @@ public class Constants {
     
         public static final int THUMB_BUTTON = 2;
         public static final int TRIGGER = 1;
-    
+        public static final int LEFT_BUTTON = 3;
+        public static final int RIGHT_BUTTON = 4;
       }
     
       public static class MotorConstants {
